@@ -169,79 +169,95 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 
 		while (((oneLine = br.readLine()) != null) && (end != true)) {
             lineNumber = lineNumber + 1;
-
-			if (oneLine.charAt(0) == '-') {
-                //read a flag
-                if (oneLine.charAt(1) == 'r') {
-                    //right justify
-                    flags = flags.replace('l','r');
-                    flags = flags.replace('c','r');
-                    flags = flags.replace('t','r');
-
-                } else if (oneLine.charAt(1) == 'c') {
-                    //center (right and left)
-                    flags = flags.replace('l','c');
-                    flags = flags.replace('r','c');
-                    flags = flags.replace('t','c');
-
-                } else if (oneLine.charAt(1) == 'l') {
-                    //left justify
-                    flags = flags.replace('r','l');
-                    flags = flags.replace('c','l');
-                    flags = flags.replace('t','l');
-
-                } else if (oneLine.charAt(1) == 't') {
-                    //title
-                    flags = flags.replace('r','t');
-                    flags = flags.replace('c','t');
-                    flags = flags.replace('l','t');
-
-                } else if (oneLine.charAt(1) == 'd') {
-                    //double space
-                    flags = flags.replace('s','d');
-
-                } else if (oneLine.charAt(1) == 's') {
-                    //single space
-                    flags = flags.replace('d','s');
-
-                } else if (oneLine.charAt(1) == 'i') {
-                    //indent on 1st line, 5 spaces, left only
-					//the "left only" status will be check in the writing method  
-                    flags = flags.replace('n','i');
-                    flags = flags.replace('b','i');
-
-                } else if (oneLine.charAt(1) == 'b') {
-                    //indent multiple lines. 10 spaces
-                    flags = flags.replace('n','b');
-                    flags = flags.replace('i','b');
-
-                } else if (oneLine.charAt(1) == '2') {
-                    //2 columns, 35chs/10chs/35chs
-                    flags = flags.replace('1','2');
-
-                } else if (oneLine.charAt(1) == '1') {
-                    //1 column
-                    flags = flags.replace('2','1');
-
-                } else if (oneLine.charAt(1) == 'e') {
-                    //blank line
-                    //adding a blank line to the output file directly
-                	flags += 'e';
-
-                } else if (oneLine.charAt(1) == 'n') {
-                    //remove indentation
-                    flags = flags.replace('i','n');
-                    flags = flags.replace('b','n');
-
-                } else {
-                    //case: invalid flag
-                    //print an error message in the error log
-                	errorString += "Error (Line number " + lineNumber + "): Invalid flag.\n";
-					//end = true;
-                }
-            } else {
-                end = writing(oneLine, flags, lineNumber);
-            } 
+            
+            if(oneLine.isEmpty()) {
+            	
+            	processedString += "\n\n";
+            	
+            }else {	
+            
+				if (oneLine.charAt(0) == '-') {
+					
+					if(oneLine.length() != 1) {
+						
+	                //read a flag
+	                if (oneLine.charAt(1) == 'r') {
+	                    //right justify
+	                    flags = flags.replace('l','r');
+	                    flags = flags.replace('c','r');
+	                    flags = flags.replace('t','r');
+	
+	                } else if (oneLine.charAt(1) == 'c') {
+	                    //center (right and left)
+	                    flags = flags.replace('l','c');
+	                    flags = flags.replace('r','c');
+	                    flags = flags.replace('t','c');
+	
+	                } else if (oneLine.charAt(1) == 'l') {
+	                    //left justify
+	                    flags = flags.replace('r','l');
+	                    flags = flags.replace('c','l');
+	                    flags = flags.replace('t','l');
+	
+	                } else if (oneLine.charAt(1) == 't') {
+	                    //title
+	                    flags = flags.replace('r','t');
+	                    flags = flags.replace('c','t');
+	                    flags = flags.replace('l','t');
+	
+	                } else if (oneLine.charAt(1) == 'd') {
+	                    //double space
+	                    flags = flags.replace('s','d');
+	
+	                } else if (oneLine.charAt(1) == 's') {
+	                    //single space
+	                    flags = flags.replace('d','s');
+	
+	                } else if (oneLine.charAt(1) == 'i') {
+	                    //indent on 1st line, 5 spaces, left only
+						//the "left only" status will be check in the writing method  
+	                    flags = flags.replace('n','i');
+	                    flags = flags.replace('b','i');
+	
+	                } else if (oneLine.charAt(1) == 'b') {
+	                    //indent multiple lines. 10 spaces
+	                    flags = flags.replace('n','b');
+	                    flags = flags.replace('i','b');
+	
+	                } else if (oneLine.charAt(1) == '2') {
+	                    //2 columns, 35chs/10chs/35chs
+	                    flags = flags.replace('1','2');
+	
+	                } else if (oneLine.charAt(1) == '1') {
+	                    //1 column
+	                    flags = flags.replace('2','1');
+	
+	                } else if (oneLine.charAt(1) == 'e') {
+	                    //blank line
+	                    //adding a blank line to the output file directly
+	                	flags += 'e';
+	
+	                } else if (oneLine.charAt(1) == 'n') {
+	                    //remove indentation
+	                    flags = flags.replace('i','n');
+	                    flags = flags.replace('b','n');
+	
+	                } else {
+	                    //case: invalid flag
+	                    //print an error message in the error log
+	                	errorString += "Error (Line number " + lineNumber + "): Invalid flag.\n";
+						//end = true;
+	                }
+	                
+					}else {
+	                	errorString += "Error (Line number " + lineNumber + "): Must include flag after -.\n";
+					}
+	            } else {
+	                end = writing(oneLine, flags, lineNumber);
+	            } 
+			
+            }
+			
 		} //end of the while loop
 
 		br.close();
