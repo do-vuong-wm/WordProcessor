@@ -30,7 +30,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		GridBagConstraints gbc = new GridBagConstraints();
 		
 		setTitle("Word Processor");
-		setSize(680, 800);
+		setSize(1000, 800);
 		setMinimumSize(getSize());
 		setPreferredSize(getSize());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -70,7 +70,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		/******************Text Area********************/
 		Font font = new Font("Arial", Font.PLAIN, 12);
 		
-		previewDisplay = new JTextArea(30, 51);
+		previewDisplay = new JTextArea(30, 80);
 		previewDisplay.setMargin(new Insets(10,10,10,10));
 		previewDisplay.setLineWrap(true);
 		previewDisplay.setFont(font);
@@ -78,7 +78,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		//previewDisplay.setEditable(false);
 		JScrollPane previewScroll = new JScrollPane(previewDisplay);
 		
-		errorLogDisplay = new JTextArea("Error: An Error", 10, 51); 
+		errorLogDisplay = new JTextArea("Error: An Error", 10, 80); 
 		errorLogDisplay.setMargin(new Insets(10,10,10,10));
 		errorLogDisplay.setLineWrap(true);
 		errorLogDisplay.setFont(font);
