@@ -235,7 +235,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	                } else if (oneLine.charAt(1) == 'e') {
 	                    //blank line
 	                    //adding a blank line to the output file directly
-	                	flags += 'e';
+	                	processedString += "\n\n";
 	
 	                } else if (oneLine.charAt(1) == 'n') {
 	                    //remove indentation
@@ -339,6 +339,14 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 				//1 columns
 				//assume the input must be 1 column
 				//do nothing
+				String tempStr = oneLine;
+				oneLine = "";
+				int indexStr = 0;
+				while (indexStr < tempStr.length()) {
+					// 79 because the newline? idk
+					oneLine += tempStr.substring(indexStr, Math.min(indexStr + 79, tempStr.length())) + '\n';
+					indexStr += 79;
+				}
 			} else if (flags.charAt(3) == '2') {
 				//2 columns, 35chs/10chs/35chs
 				//twoColumn(oneLine);
