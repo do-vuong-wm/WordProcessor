@@ -235,7 +235,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	                } else if (oneLine.charAt(1) == 'e') {
 	                    //blank line
 	                    //adding a blank line to the output file directly
-	                	processedString += "\n\n";
+	                	processedString += '\n';
 	
 	                } else if (oneLine.charAt(1) == 'n') {
 	                    //remove indentation
@@ -266,9 +266,76 @@ public class WordProcessorGui extends JFrame implements ActionListener{
     
     public boolean writing(String oneLine, String flags, int lineNumber) {
 		boolean end = false;
-		int index;
-		String temp;
+//		int index;
+//		String temp;
+		
+		//Column
+		if (flags.charAt(3) == '1') {
+			//Justification
+			switch(flags.charAt(0)) {
+				case 'l':
+					//Indentation
+					String tempStr;
+					int indexStr;
+					switch(flags.charAt(2)) {
+						case 'i':
+							tempStr = "     " + oneLine;
+							oneLine = "";
+							indexStr = 0;
+							while (indexStr < tempStr.length()) {
+								//Spacing
+								if(flags.charAt(1) == 's')
+									oneLine += tempStr.substring(indexStr, Math.min(indexStr + 80, tempStr.length())) + '\n';
+								else if(flags.charAt(1) == 'd')
+									oneLine += tempStr.substring(indexStr, Math.min(indexStr + 80, tempStr.length())) + "\n\n";
+								indexStr += 80;
+							}
+						break;
+						case 'b':
+							tempStr = oneLine;
+							oneLine = "";
+							indexStr = 0;
+							
+							while (indexStr < tempStr.length()) {
+								if(flags.charAt(1) == 's')
+									oneLine += "          " + tempStr.substring(indexStr, Math.min(indexStr + 70, tempStr.length())) + '\n';
+								else if(flags.charAt(1) == 'd')
+									oneLine += "          " + tempStr.substring(indexStr, Math.min(indexStr + 70, tempStr.length())) + "\n\n";
+								indexStr += 70;
+							}
+						break;
+						case 'n':
+							tempStr = oneLine;
+							oneLine = "";
+							indexStr = 0;
+							
+							if(tempStr.substring(indexStr, 5).equals("     "))
+								tempStr = tempStr.substring(5, tempStr.length());
+							
+							while (indexStr < tempStr.length()) {
+								if(flags.charAt(1) == 's')
+									oneLine += tempStr.substring(indexStr, Math.min(indexStr + 80, tempStr.length())) + '\n';
+								else if(flags.charAt(1) == 'd')
+									oneLine += tempStr.substring(indexStr, Math.min(indexStr + 80, tempStr.length())) + "\n\n";
+								indexStr += 80;
+							}
+						break;
+					}
+				break;
+				case 'r':
+				break;
+				case 'c':
+				break;
+			}
+			
+		} else if (flags.charAt(3) == '2') {
+			//2 columns, 35chs/10chs/35chs
+			//twoColumn(oneLine);
+		}
+		
+		processedString += oneLine;
 
+/********************************************************************************************************
 		if (flags.charAt(0) != 'l') {
 			//case: flag "-l" required for using flag "-i"
             //print an error message in the error log
@@ -333,31 +400,13 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 				}
 				oneLine = temp;
 			}
-			
-			//Column
-			if (flags.charAt(3) == '1') {
-				//1 columns
-				//assume the input must be 1 column
-				//do nothing
-				String tempStr = oneLine;
-				oneLine = "";
-				int indexStr = 0;
-				while (indexStr < tempStr.length()) {
-					// 79 because the newline? idk
-					oneLine += tempStr.substring(indexStr, Math.min(indexStr + 79, tempStr.length())) + '\n';
-					indexStr += 79;
-				}
-			} else if (flags.charAt(3) == '2') {
-				//2 columns, 35chs/10chs/35chs
-				//twoColumn(oneLine);
-			}
 
         	//Finally, write to a file 
 			//or print it to the preview
 			//appendToFile(address, oneLine);
 			processedString += oneLine;
 		}
-
+************************************************************************************************************/
 		return end;
     }
 	
