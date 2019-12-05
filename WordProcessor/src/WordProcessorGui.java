@@ -30,12 +30,12 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		GridBagConstraints gbc = new GridBagConstraints();
 		
 		setTitle("Word Processor");
-		setSize(1000, 800);
+		setSize(700, 880);
 		setMinimumSize(getSize());
 		setPreferredSize(getSize());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(grid);
-		setResizable(false);
+		setResizable(true);
 		
 		/*******************Menu********************/
 		
@@ -68,8 +68,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		errorLogPanel.setBorder(BorderFactory.createTitledBorder("Error Log"));
 		
 		/******************Text Area********************/
-		Font font = new Font("Arial", Font.PLAIN, 12);
-		
+		Font font = new Font("monospaced", Font.PLAIN, 12);
 		previewDisplay = new JTextArea(30, 80);
 		previewDisplay.setMargin(new Insets(10,10,10,10));
 		previewDisplay.setLineWrap(true);
