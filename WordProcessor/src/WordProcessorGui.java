@@ -1,5 +1,9 @@
 /**
+ * Names: Vuong, Tsz, Elizabeth, Jared
+ * Class ID: CSE360
+ * Final Project
  * 
+ * Contains WordProcessorGui class
  */
 
 import java.awt.*; 
@@ -14,13 +18,19 @@ import java.util.*;
 
 
 /**
- * @author Vuong, Tsz
- *
+ * WordProcessorGui
+ * Is a GUI that process a text file with flags given.
+ * When pass a text file loaded, a preview
+ * is shown. User can save the processed file on their directory.
+ * 
+ * @author Vuong, Tsz, Elizabeth, Jared
+ * 
  */
 
 @SuppressWarnings("serial")
 public class WordProcessorGui extends JFrame implements ActionListener{
 	
+	// Variables Initialization
 	private JMenuItem openFile, saveFile;
 	private JTextArea previewDisplay, errorLogDisplay;
 	private File processFile;
@@ -28,14 +38,16 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	private String errorString;
 	private String flags = "lsn1-";
 	
+	// static function to split a line into fixed characters size
     public static List<String> splitString(String msg, int lineSize, char indentation) {
-        List<String> res = new ArrayList<>();
+        // uses a list for the data structure
+    	List<String> res = new ArrayList<>();
 
         Pattern p = Pattern.compile("\\b.{1," + (lineSize-1) + "}\\b\\W?");
         Matcher m = p.matcher(msg);
         
         while(m.find()) {
-        		//System.out.println(m.group()+ '/');
+        		// can add spaces for the block indentation
         		if(indentation == 'b')
                 	res.add("          " + m.group().trim());
                 else
@@ -44,12 +56,14 @@ public class WordProcessorGui extends JFrame implements ActionListener{
         return res;
     }
 	
+    // The Gui constructor, makes a gui interface
 	WordProcessorGui(){
 		
 		GridBagLayout grid = new GridBagLayout();
 		
 		GridBagConstraints gbc = new GridBagConstraints();
 		
+		// Set the gui title, size, layout
 		setTitle("Word Processor");
 		setSize(700, 880);
 		setMinimumSize(getSize());
@@ -59,14 +73,14 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		setResizable(true);
 		
 		/*******************Menu********************/
-		
+		// set a menu at the top for saving and opening files
 		JMenuBar menuBar = new JMenuBar();
 		JMenu menu = new JMenu("Menu");
 		
 		openFile = new JMenuItem("Open File and Process");
 		saveFile = new JMenuItem("Save File");
 		
-		// Add listener
+		// Event listeners to listen to menu clicks
 		openFile.addActionListener(this);
 		saveFile.addActionListener(this);
 		
@@ -78,7 +92,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		setJMenuBar(menuBar);
 		
 		/*****************Panels*******************/
-		
+		//Panels to hold the Text Area
 		JPanel previewPanel, errorLogPanel;
 		previewPanel = new JPanel();
 		errorLogPanel = new JPanel();
@@ -86,23 +100,24 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		errorLogPanel.setBorder(BorderFactory.createTitledBorder("Error Log"));
 		
 		/******************Text Area********************/
+		// Makes two text Area that are scrollable, set a font that has a fixed size
+		// preview text area
 		Font font = new Font("monospaced", Font.PLAIN, 12);
 		previewDisplay = new JTextArea(30, 80);
 		previewDisplay.setMargin(new Insets(10,10,10,10));
 		previewDisplay.setLineWrap(true);
 		previewDisplay.setFont(font);
 		previewDisplay.setForeground(Color.black);
-		//previewDisplay.setEditable(false);
 		JScrollPane previewScroll = new JScrollPane(previewDisplay);
-		
-		errorLogDisplay = new JTextArea("Error: An Error", 10, 80); 
+		// error log text area
+		errorLogDisplay = new JTextArea("", 10, 80); 
 		errorLogDisplay.setMargin(new Insets(10,10,10,10));
 		errorLogDisplay.setLineWrap(true);
 		errorLogDisplay.setFont(font);
 		errorLogDisplay.setForeground(Color.red);
 		errorLogDisplay.setEditable(false);
 		JScrollPane errorLogScroll = new JScrollPane(errorLogDisplay);
-		
+		// adds scrolling
 		previewScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		previewScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		previewPanel.add(previewScroll,gbc);
@@ -112,7 +127,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		errorLogPanel.add(errorLogScroll,gbc);
 		
 		/***********************************************/
-		//gbc.fill = GridBagConstraints.VERTICAL;
+		// set the layout of the gui with GridBagLayout and GridBagConstraints
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.weightx = 1.0;
@@ -128,10 +143,14 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	    gbc.gridy = 1;
 		add(errorLogPanel, gbc);
 		
-		pack();
+		//makes visible
 		setVisible(true);
 	}
 	
+	/**
+	 * Listener calls when event happens
+	 * @param e the event to process
+	 */
 	public void actionPerformed(ActionEvent e) {    
 		if(e.getSource() == openFile) {
 		    JFileChooser fc = new JFileChooser();
@@ -166,6 +185,10 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		}
 	}
 	
+	/**
+	 * Gets the file and processes the flags
+	 * @throws IOException
+	 */
     public void processing() throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(processFile));
 		String oneLine;
@@ -266,6 +289,12 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		
     }
     
+    /**
+     * Process the line and stores it in a private string
+     * @param oneLine the line to be processed
+     * @param lineNumber what line number it is
+     * @return a true if an error occurred
+     */
     public boolean writing(String oneLine, int lineNumber) {
     	
 		String newStr = "";
@@ -361,27 +390,26 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	    				}
 	        	}
 	        	
-        	}else if(flags.charAt(0) == 'c' && flags.charAt(2) == 'n' && flags.charAt(3) == '1') {
-				int countLeadingWS = 0;
+        	}else if(flags.charAt(0) == 'c' && flags.charAt(2) == 'n') {
 				int spacesBetween = 0;
 				int spacesBetweenMod = 0;
 				int spacesCount;
 				int totalSpaces;
 				int totalChars = 0;
+				int chars;
 			
-//				for(int i = 0; i < tempStr.length(); i++) {
-//					if(tempStr.charAt(i) == ' ')
-//						countLeadingWS++;
-//					else
-//						break;
-//				}
+				if(flags.charAt(3) == '1')
+					chars = 80;
+				else
+					chars = 35;
+				
 				String[] words = tempStr.split("\\s+");
 				if(words.length > 0) {
 					for(int i = 0;  i < words.length; i++) {
 						totalChars += words[i].length();
 					}
 					
-					spacesCount = (80-totalChars-countLeadingWS);
+					spacesCount = (chars-totalChars);
 					totalSpaces = (words.length-1);
 					if(totalSpaces != 0) {
 						spacesBetween = (spacesCount)/totalSpaces;
@@ -389,18 +417,24 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 					}
 					tempStr = "";
 					for(int i = 0;  i < words.length; i++) {
-						if(i != words.length-1)
-							if(spacesBetweenMod == 0)
+						if(i != totalSpaces) {
+							if(spacesBetweenMod == 0) {
 								tempStr += words[i] + new String(new char[spacesBetween]).replace("\0", " ");
-							else {
+								if(flags.charAt(3) == '2')
+									wordblocks.set(counter, tempStr);
+							}else {
 								tempStr += words[i] + new String(new char[spacesBetween+1]).replace("\0", " ");
+								if(flags.charAt(3) == '2')
+									wordblocks.set(counter, tempStr);
 								spacesBetweenMod--;
 							}
-						else
+						}else {
 							tempStr += words[i];
+							if(flags.charAt(3) == '2')
+								wordblocks.set(counter, tempStr);
+						}
 					}
 				}
-//				tempStr = new String(new char[countLeadingWS]).replace("\0", " ") + tempStr;
     		}else {
             	if(flags.charAt(3) == '1')
             		addSpaces = 80 - tempStrLen;
@@ -464,50 +498,13 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		
     }
 	
+    /**
+     * Driver for the GUI
+     * 
+     * @param args
+     */
 	public static void main(String[] args) {
 		WordProcessorGui wpg = new WordProcessorGui();
 	}
 	
 }
-
-//if(flags.charAt(0) == 'c' && flags.charAt(2) != 'b') {
-//	int countLeadingWS = 0;
-//	int spacesBetween = 0;
-//	int spacesBetweenMod = 0;
-//	int spacesCount;
-//	int totalSpaces;
-//	int totalChars = 0;
-//
-//	for(int i = 0; i < tempStr.length(); i++) {
-//		if(tempStr.charAt(i) == ' ')
-//			countLeadingWS++;
-//		else
-//			break;
-//	}
-//	String[] words = tempStr.split("\\s+");
-//	if(words.length > 0) {
-//		for(int i = 0;  i < words.length; i++) {
-//			totalChars += words[i].length();
-//		}
-//		
-//		spacesCount = (80-totalChars-countLeadingWS);
-//		totalSpaces = (words.length-1);
-//		if(totalSpaces != 0) {
-//			spacesBetween = (spacesCount)/totalSpaces;
-//			spacesBetweenMod = (spacesCount)%totalSpaces;
-//		}
-//		tempStr = "";
-//		for(int i = 0;  i < words.length; i++) {
-//			if(i != words.length-1)
-//				if(spacesBetweenMod == 0)
-//					tempStr += words[i] + new String(new char[spacesBetween]).replace("\0", " ");
-//				else {
-//					tempStr += words[i] + new String(new char[spacesBetween+1]).replace("\0", " ");
-//					spacesBetweenMod--;
-//				}
-//			else
-//				tempStr += words[i];
-//		}
-//	}
-//		tempStr = new String(new char[countLeadingWS]).replace("\0", " ") + tempStr;
-//}
