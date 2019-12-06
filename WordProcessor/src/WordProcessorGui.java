@@ -140,6 +140,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		        processFile = fc.getSelectedFile(); // this is a File object   
 		        //String filepath = processFile.getPath();
 		        try {
+		        	flags = "lsn1-";
 		        	processedString = "";
 		        	errorString = "";
 			        processing();
