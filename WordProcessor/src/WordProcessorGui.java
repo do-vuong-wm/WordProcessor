@@ -26,6 +26,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	private File processFile;
 	private String processedString;
 	private String errorString;
+	private String flags = "lsn1-";
 	
     public static List<String> splitString(String msg, int lineSize, char indentation) {
         List<String> res = new ArrayList<>();
@@ -172,7 +173,6 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		//int index;
 
         //flags: Justification; Spacing; Indentation; Column
-        String flags = "lsn1-"; //default (80 chars/line):  left(l); single space(s); no indentations(n); one column(1) 
 
 		while (((oneLine = br.readLine()) != null) && (end != true)) {
             lineNumber = lineNumber + 1;
@@ -192,19 +192,16 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	                    //right justify
 	                    flags = flags.replace('l','r');
 	                    flags = flags.replace('c','r');
-	                    flags = flags.replace('t','r');
 	
 	                } else if (oneLine.charAt(1) == 'c') {
 	                    //center (right and left)
 	                    flags = flags.replace('l','c');
 	                    flags = flags.replace('r','c');
-	                    flags = flags.replace('t','c');
 	
 	                } else if (oneLine.charAt(1) == 'l') {
 	                    //left justify
 	                    flags = flags.replace('r','l');
 	                    flags = flags.replace('c','l');
-	                    flags = flags.replace('t','l');
 	
 	                } else if (oneLine.charAt(1) == 't') {
 	                    //title
@@ -257,7 +254,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	                	errorString += "Error (Line number " + lineNumber + "): Must include flag after -.\n";
 					}
 	            } else {
-	                end = writing(oneLine, flags, lineNumber);
+	                end = writing(oneLine, lineNumber);
 	            } 
 			
             }
@@ -268,7 +265,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		
     }
     
-    public boolean writing(String oneLine, String flags, int lineNumber) {
+    public boolean writing(String oneLine, int lineNumber) {
     	
 		String newStr = "";
 		String temp;
@@ -280,7 +277,6 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		ListIterator<String> iterator;
 		
 		if (flags.charAt(4) == 't') {
-			System.out.println("here");
 			//-t: centered, no justification (i.e. just centers 1 line)
 			temp = oneLine;
 			newStr = "";
@@ -364,7 +360,47 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	    				}
 	        	}
 	        	
-        	}else {
+        	}else if(flags.charAt(0) == 'c' && flags.charAt(2) != 'b' && flags.charAt(2) != 'i' && flags.charAt(3) == '2') {
+				int countLeadingWS = 0;
+				int spacesBetween = 0;
+				int spacesBetweenMod = 0;
+				int spacesCount;
+				int totalSpaces;
+				int totalChars = 0;
+			
+				for(int i = 0; i < tempStr.length(); i++) {
+					if(tempStr.charAt(i) == ' ')
+						countLeadingWS++;
+					else
+						break;
+				}
+				String[] words = tempStr.split("\\s+");
+				if(words.length > 0) {
+					for(int i = 0;  i < words.length; i++) {
+						totalChars += words[i].length();
+					}
+					
+					spacesCount = (80-totalChars-countLeadingWS);
+					totalSpaces = (words.length-1);
+					if(totalSpaces != 0) {
+						spacesBetween = (spacesCount)/totalSpaces;
+						spacesBetweenMod = (spacesCount)%totalSpaces;
+					}
+					tempStr = "";
+					for(int i = 0;  i < words.length; i++) {
+						if(i != words.length-1)
+							if(spacesBetweenMod == 0)
+								tempStr += words[i] + new String(new char[spacesBetween]).replace("\0", " ");
+							else {
+								tempStr += words[i] + new String(new char[spacesBetween+1]).replace("\0", " ");
+								spacesBetweenMod--;
+							}
+						else
+							tempStr += words[i];
+					}
+				}
+				tempStr = new String(new char[countLeadingWS]).replace("\0", " ") + tempStr;
+    		}else {
             	if(flags.charAt(3) == '1')
             		addSpaces = 80 - tempStrLen;
             	else if(flags.charAt(3) == '2')
