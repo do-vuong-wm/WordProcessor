@@ -103,14 +103,14 @@ public class WordProcessorGui extends JFrame implements ActionListener {
 		// Makes two text Area that are scrollable, set a font that has a fixed size
 		// preview text area
 		Font font = new Font("monospaced", Font.PLAIN, 12);
-		previewDisplay = new JTextArea(30, 80);
+		previewDisplay = new JTextArea(30, 81);
 		previewDisplay.setMargin(new Insets(10, 10, 10, 10));
 		previewDisplay.setLineWrap(true);
 		previewDisplay.setFont(font);
 		previewDisplay.setForeground(Color.black);
 		JScrollPane previewScroll = new JScrollPane(previewDisplay);
 		// error log text area
-		errorLogDisplay = new JTextArea("", 10, 80);
+		errorLogDisplay = new JTextArea("", 10, 81);
 		errorLogDisplay.setMargin(new Insets(10, 10, 10, 10));
 		errorLogDisplay.setLineWrap(true);
 		errorLogDisplay.setFont(font);
