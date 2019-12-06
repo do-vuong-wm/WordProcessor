@@ -2,12 +2,16 @@
  * 
  */
 
-import java.awt.*;  
+import java.awt.*; 
 import java.awt.event.*;  
 import javax.swing.*;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.*; 
+
 
 /**
  * @author Vuong, Tsz
@@ -22,6 +26,22 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	private File processFile;
 	private String processedString;
 	private String errorString;
+	
+    public static List<String> splitString(String msg, int lineSize, char indentation) {
+        List<String> res = new ArrayList<>();
+
+        Pattern p = Pattern.compile("\\b.{1," + (lineSize-1) + "}\\b\\W?");
+        Matcher m = p.matcher(msg);
+        
+        while(m.find()) {
+        		//System.out.println(m.group()+ '/');
+        		if(indentation == 'b')
+                	res.add("          " + m.group().trim());
+                else
+                	res.add(m.group().trim());
+        }
+        return res;
+    }
 	
 	WordProcessorGui(){
 		
@@ -57,9 +77,6 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		setJMenuBar(menuBar);
 		
 		/*****************Panels*******************/
-//		JLabel preview, errorLog;
-//		preview = new JLabel("Preview");
-//		errorLog = new JLabel("Error Log");
 		
 		JPanel previewPanel, errorLogPanel;
 		previewPanel = new JPanel();
@@ -122,12 +139,6 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		        processFile = fc.getSelectedFile(); // this is a File object   
 		        //String filepath = processFile.getPath();
 		        try {
-//			        BufferedReader br = new BufferedReader(new FileReader(filepath));    
-//			        String s1 = "", s2 = "";                         
-//			        while((s1 = br.readLine()) != null) {
-//			        	s2 += s1 + "\n";
-//			        }
-			        // Call processing function in here on File object then display new File object
 		        	processedString = "";
 		        	errorString = "";
 			        processing();
@@ -143,9 +154,6 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		    int i = fc.showSaveDialog(this);
 		    if(i == JFileChooser.APPROVE_OPTION) { 
 		    	try {
-		    		//if(processFile != null) {
-		    			//Files.copy(processFile.toPath(), fc.getSelectedFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
-		    		//}
 		    	        FileWriter fw = new FileWriter(fc.getSelectedFile());
 		    	        fw.write(processedString);
 		    	        fw.close();
@@ -164,7 +172,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 		//int index;
 
         //flags: Justification; Spacing; Indentation; Column
-        String flags = "lsn1"; //default (80 chars/line):  left(l); single space(s); no indentations(n); one column(1) 
+        String flags = "lsn1-"; //default (80 chars/line):  left(l); single space(s); no indentations(n); one column(1) 
 
 		while (((oneLine = br.readLine()) != null) && (end != true)) {
             lineNumber = lineNumber + 1;
@@ -200,10 +208,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	
 	                } else if (oneLine.charAt(1) == 't') {
 	                    //title
-	                    flags = flags.replace('r','t');
-	                    flags = flags.replace('c','t');
-	                    flags = flags.replace('l','t');
-	
+	                    flags = flags.replace('-','t');
 	                } else if (oneLine.charAt(1) == 'd') {
 	                    //double space
 	                    flags = flags.replace('s','d');
@@ -264,149 +269,133 @@ public class WordProcessorGui extends JFrame implements ActionListener{
     }
     
     public boolean writing(String oneLine, String flags, int lineNumber) {
+    	
+		String newStr = "";
 		boolean end = false;
-//		int index;
-//		String temp;
 		
-		//Column
-		if (flags.charAt(3) == '1') {
-			//Justification
-			switch(flags.charAt(0)) {
-				case 'l':
-					//Indentation
-					String tempStr;
-					int indexStr;
-					switch(flags.charAt(2)) {
-						case 'i':
-							tempStr = "     " + oneLine;
-							oneLine = "";
-							indexStr = 0;
-							while (indexStr < tempStr.length()) {
-								//Spacing
-								if(flags.charAt(1) == 's')
-									oneLine += tempStr.substring(indexStr, Math.min(indexStr + 80, tempStr.length())) + '\n';
-								else if(flags.charAt(1) == 'd')
-									oneLine += tempStr.substring(indexStr, Math.min(indexStr + 80, tempStr.length())) + "\n\n";
-								indexStr += 80;
-							}
-						break;
-						case 'b':
-							tempStr = oneLine;
-							oneLine = "";
-							indexStr = 0;
-							
-							while (indexStr < tempStr.length()) {
-								if(flags.charAt(1) == 's')
-									oneLine += "          " + tempStr.substring(indexStr, Math.min(indexStr + 70, tempStr.length())) + '\n';
-								else if(flags.charAt(1) == 'd')
-									oneLine += "          " + tempStr.substring(indexStr, Math.min(indexStr + 70, tempStr.length())) + "\n\n";
-								indexStr += 70;
-							}
-						break;
-						case 'n':
-							tempStr = oneLine;
-							oneLine = "";
-							indexStr = 0;
-							
-							if(tempStr.substring(indexStr, 5).equals("     "))
-								tempStr = tempStr.substring(5, tempStr.length());
-							
-							while (indexStr < tempStr.length()) {
-								if(flags.charAt(1) == 's')
-									oneLine += tempStr.substring(indexStr, Math.min(indexStr + 80, tempStr.length())) + '\n';
-								else if(flags.charAt(1) == 'd')
-									oneLine += tempStr.substring(indexStr, Math.min(indexStr + 80, tempStr.length())) + "\n\n";
-								indexStr += 80;
-							}
-						break;
-					}
-				break;
-				case 'r':
-				break;
-				case 'c':
-				break;
-			}
+		List<String> wordblocks = null;
+		ListIterator<String> iterator;
+		
+		if(flags.charAt(3) == '1') {
 			
-		} else if (flags.charAt(3) == '2') {
-			//2 columns, 35chs/10chs/35chs
-			//twoColumn(oneLine);
+			if(flags.charAt(2) == 'i') {
+				wordblocks = splitString("XXXXX"+ oneLine, 80, flags.charAt(2));
+			}
+			if(flags.charAt(2) == 'b')
+				wordblocks = splitString(oneLine, 70, flags.charAt(2));
+			
+			if(flags.charAt(2) == 'n')
+				wordblocks = splitString(oneLine, 80, flags.charAt(2));
+
+		}else if(flags.charAt(3) == '2') {
+			if(flags.charAt(2) == 'i')
+				wordblocks = splitString("XXXXX" + oneLine, 30, flags.charAt(2));
+			if(flags.charAt(2) == 'b')
+				wordblocks = splitString(oneLine, 25, flags.charAt(2));
+			if(flags.charAt(2) == 'n')
+				wordblocks = splitString(oneLine, 35, flags.charAt(2));
 		}
+				
+		iterator = wordblocks.listIterator();
 		
-		processedString += oneLine;
+		int counter = 0;
 
-/********************************************************************************************************
-		if (flags.charAt(0) != 'l') {
-			//case: flag "-l" required for using flag "-i"
-            //print an error message in the error log
-            errorString += "Error (Line number " + lineNumber + "): flag -l is required for using flag -i.\n";
-			//end = true;
-		}
+        while (iterator.hasNext()) { 
+        	String tempStr = iterator.next();
+        	int tempStrLen = tempStr.length();
+        	int addSpaces = 0;
+        	
+        	if(counter == 0) {
+        		if(tempStrLen >= 5) {
+	        		if(tempStr.substring(0, 5).equals("XXXXX")) {
+	        			tempStr = new String(new char[5]).replace("\0", " ") + tempStr.substring(5, tempStrLen);
+	        			if(flags.charAt(3) == '2')
+	        				wordblocks.set(0, tempStr);
+	        		}
+        		}
+        	}
+        	
+        	if(flags.charAt(0) == 'r') {
+        	
+	        	if(flags.charAt(3) == '1') {
+	    				tempStr = tempStr.trim();
+	    				int strLength = tempStr.length();
+	    				int numberOfSpaces = 80 - strLength;
+	    				
+	    				if(numberOfSpaces > 0) {
+	    					tempStr = new String(new char[numberOfSpaces]).replace("\0", " ") + tempStr;
+	    				}
+	        	}else if(flags.charAt(3) == '2') {
+	    				tempStr = tempStr.trim();
+	    				int strLength = tempStr.length();
+	    				int numberOfSpaces = 35 - strLength;
+	    				
+	    				if(numberOfSpaces > 0) {
+	    					tempStr = new String(new char[numberOfSpaces]).replace("\0", " ") + tempStr;
+	    					wordblocks.set(counter, tempStr);
+	    				}
+	        	}
+	        	
+        	}else {
+            	if(flags.charAt(3) == '1')
+            		addSpaces = 80 - tempStrLen;
+            	else if(flags.charAt(3) == '2')
+            		addSpaces = 35 - tempStrLen;
+            	
+            	tempStr = tempStr + new String(new char[addSpaces]).replace("\0", " ");
+            	if(flags.charAt(3) == '2') {
+            		wordblocks.set(counter, tempStr);
+            	}
+            	System.out.println(tempStr);
+        	}
+        	
+        	newStr += tempStr;
+        	
+			if(flags.charAt(1) == 's')
+				newStr += '\n';
+			else if(flags.charAt(1) == 'd')
+				newStr += "\n\n";
+			
+			counter++;
+        } 
+		
+		if(flags.charAt(3) == '2') {
+    		int cols = wordblocks.size()/2;;
+    		int extraCol = wordblocks.size()%2;
+    		int anocounter = 0;
+    		int othCounter = 0;
+    		
+    		newStr = "";
+    		
+    		if(extraCol == 1) {
+    			othCounter = cols+1;
+    		}else{
+    			othCounter = cols;
+    		}
+    		
+    		while (anocounter < cols) {
+    			        		
+        		if(extraCol == 1 && othCounter == cols) {
+        			newStr += wordblocks.get(cols);
+        		}else {
+        			newStr += wordblocks.get(anocounter) + "          " + wordblocks.get(othCounter);
+        		}
+        		
+    			if(flags.charAt(1) == 's')
+    				newStr += '\n';
+    			else if(flags.charAt(1) == 'd')
+    				newStr += "\n\n";
+    			
+    			othCounter++;
+    			anocounter++;
+    		}
+    		
+    	}
 
-		if (end != true) {
-			//checking each of the flags
-        	//call each flag's related method to adjust the output
-
-			//Justification
-			if (flags.charAt(0) == 'l') {
-				//left justify
-				oneLine = String.format("%s", oneLine);
-
-			} else if (flags.charAt(0) == 'r') {
-				//right justify
-				//oneLine = String.format("%s", oneLine);
-
-			} else if (flags.charAt(0) == 'c') {
-				//center (right and left)
-				//???
-			} else if (flags.charAt(0) == 't') {
-				//title
-				//???
-			}
-
-			//Spacing
-			if (flags.charAt(1) == 's') {
-				//single space
-				//assume the input must be single space
-				//do nothing
-			} else if (flags.charAt(1) == 'd') {
-				//double space
-				temp = null;
-				for (index = 0; index < oneLine.length(); index++) {
-					temp = temp + oneLine.charAt(index);
-					if ((index % 80 == 0) && (index != 0)) {
-						temp = temp + "\n";
-					}
-				}
-				oneLine = temp;
-			}
-
-			//Indentation
-			if (flags.charAt(2) == 'n') {
-				//remove indentation
-				//do nothing
-			} else if (flags.charAt(2) == 'i') {
-				//indent on 1st line, 5 spaces, left only
-				oneLine = "     " + oneLine;
-
-			} else if (flags.charAt(2) == 'b') {
-				//indent multiple lines. 10 spaces
-				temp = null;
-				for (index = 0; index < oneLine.length(); index++) {
-					if (index % 80 == 0) {
-						temp = "          " + temp;
-					}
-					temp = temp + oneLine.charAt(index);
-				}
-				oneLine = temp;
-			}
-
-        	//Finally, write to a file 
-			//or print it to the preview
-			//appendToFile(address, oneLine);
-			processedString += oneLine;
-		}
-************************************************************************************************************/
+		processedString += newStr;
+		
 		return end;
+		
     }
 	
 	public static void main(String[] args) {
