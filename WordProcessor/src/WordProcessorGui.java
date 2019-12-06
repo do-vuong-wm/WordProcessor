@@ -179,7 +179,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
             
             if(oneLine.isEmpty()) {
             	
-            	processedString += "\n\n";
+            	processedString += "\n";
             	
             }else {	
             
@@ -271,10 +271,38 @@ public class WordProcessorGui extends JFrame implements ActionListener{
     public boolean writing(String oneLine, String flags, int lineNumber) {
     	
 		String newStr = "";
+		String temp;
+		String temp2;
+		int indexStr;
 		boolean end = false;
 		
 		List<String> wordblocks = null;
 		ListIterator<String> iterator;
+		
+		if (flags.charAt(4) == 't') {
+			System.out.println("here");
+			//-t: centered, no justification (i.e. just centers 1 line)
+			temp = oneLine;
+			newStr = "";
+			indexStr = 0;
+			while (indexStr < temp.length()) {
+				temp2 = temp.substring(indexStr, temp.length());
+				if (temp2.length() > 80) {
+					temp2 = temp2.substring(0, 80);
+				}
+				int numberOfSpaces = 80 - temp2.length();
+				for (int i = 0; i < java.lang.Math.ceil(numberOfSpaces/2); i++) {
+					newStr += ' ';
+				}
+				newStr += temp2;
+				for (int i = 0; i < java.lang.Math.floor(numberOfSpaces/2); i++) {
+					newStr += ' ';
+				}
+				indexStr += 80;
+				newStr += '\n';
+			}
+			flags = flags.replace('t','-');
+		}else {
 		
 		if(flags.charAt(3) == '1') {
 			
@@ -346,7 +374,6 @@ public class WordProcessorGui extends JFrame implements ActionListener{
             	if(flags.charAt(3) == '2') {
             		wordblocks.set(counter, tempStr);
             	}
-            	System.out.println(tempStr);
         	}
         	
         	newStr += tempStr;
@@ -391,6 +418,8 @@ public class WordProcessorGui extends JFrame implements ActionListener{
     		}
     		
     	}
+		
+		}
 
 		processedString += newStr;
 		
@@ -403,3 +432,45 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	}
 	
 }
+
+//if(flags.charAt(0) == 'c' && flags.charAt(2) != 'b') {
+//	int countLeadingWS = 0;
+//	int spacesBetween = 0;
+//	int spacesBetweenMod = 0;
+//	int spacesCount;
+//	int totalSpaces;
+//	int totalChars = 0;
+//
+//	for(int i = 0; i < tempStr.length(); i++) {
+//		if(tempStr.charAt(i) == ' ')
+//			countLeadingWS++;
+//		else
+//			break;
+//	}
+//	String[] words = tempStr.split("\\s+");
+//	if(words.length > 0) {
+//		for(int i = 0;  i < words.length; i++) {
+//			totalChars += words[i].length();
+//		}
+//		
+//		spacesCount = (80-totalChars-countLeadingWS);
+//		totalSpaces = (words.length-1);
+//		if(totalSpaces != 0) {
+//			spacesBetween = (spacesCount)/totalSpaces;
+//			spacesBetweenMod = (spacesCount)%totalSpaces;
+//		}
+//		tempStr = "";
+//		for(int i = 0;  i < words.length; i++) {
+//			if(i != words.length-1)
+//				if(spacesBetweenMod == 0)
+//					tempStr += words[i] + new String(new char[spacesBetween]).replace("\0", " ");
+//				else {
+//					tempStr += words[i] + new String(new char[spacesBetween+1]).replace("\0", " ");
+//					spacesBetweenMod--;
+//				}
+//			else
+//				tempStr += words[i];
+//		}
+//	}
+//		tempStr = new String(new char[countLeadingWS]).replace("\0", " ") + tempStr;
+//}
