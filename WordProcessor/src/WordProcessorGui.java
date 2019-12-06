@@ -361,7 +361,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 	    				}
 	        	}
 	        	
-        	}else if(flags.charAt(0) == 'c' && flags.charAt(2) != 'b' && flags.charAt(2) != 'i' && flags.charAt(3) == '2') {
+        	}else if(flags.charAt(0) == 'c' && flags.charAt(2) == 'n' && flags.charAt(3) == '1') {
 				int countLeadingWS = 0;
 				int spacesBetween = 0;
 				int spacesBetweenMod = 0;
@@ -369,12 +369,12 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 				int totalSpaces;
 				int totalChars = 0;
 			
-				for(int i = 0; i < tempStr.length(); i++) {
-					if(tempStr.charAt(i) == ' ')
-						countLeadingWS++;
-					else
-						break;
-				}
+//				for(int i = 0; i < tempStr.length(); i++) {
+//					if(tempStr.charAt(i) == ' ')
+//						countLeadingWS++;
+//					else
+//						break;
+//				}
 				String[] words = tempStr.split("\\s+");
 				if(words.length > 0) {
 					for(int i = 0;  i < words.length; i++) {
@@ -400,7 +400,7 @@ public class WordProcessorGui extends JFrame implements ActionListener{
 							tempStr += words[i];
 					}
 				}
-				tempStr = new String(new char[countLeadingWS]).replace("\0", " ") + tempStr;
+//				tempStr = new String(new char[countLeadingWS]).replace("\0", " ") + tempStr;
     		}else {
             	if(flags.charAt(3) == '1')
             		addSpaces = 80 - tempStrLen;
