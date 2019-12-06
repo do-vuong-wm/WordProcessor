@@ -378,10 +378,10 @@ public class WordProcessorGui extends JFrame implements ActionListener{
         	
         	newStr += tempStr;
         	
-			if(flags.charAt(1) == 's')
-				newStr += '\n';
-			else if(flags.charAt(1) == 'd')
+        	if(flags.charAt(1) == 'd' && counter != wordblocks.size()-1)
 				newStr += "\n\n";
+			else
+				newStr += '\n';
 			
 			counter++;
         } 
@@ -408,10 +408,10 @@ public class WordProcessorGui extends JFrame implements ActionListener{
         			newStr += wordblocks.get(anocounter) + "          " + wordblocks.get(othCounter);
         		}
         		
-    			if(flags.charAt(1) == 's')
-    				newStr += '\n';
-    			else if(flags.charAt(1) == 'd')
+        		if(flags.charAt(1) == 'd' && othCounter != wordblocks.size()-1)
     				newStr += "\n\n";
+    			else
+    				newStr += '\n';
     			
     			othCounter++;
     			anocounter++;
