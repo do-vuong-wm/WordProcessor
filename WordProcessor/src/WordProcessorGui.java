@@ -1,7 +1,7 @@
 
 /**
  * Names: Vuong, Tsz, Elizabeth, Jared
- * Class ID: CSE360
+ * Class ID: CSE360-70642
  * Final Project
  * 
  * Contains WordProcessorGui class
@@ -18,7 +18,8 @@ import java.util.regex.Pattern;
 import java.util.*;
 
 /**
- * WordProcessorGui Is a GUI that process a text file with flags given. When
+ * WordProcessorGui 
+ * Is a GUI that process a text file with flags given. When
  * pass a text file loaded, a preview is shown. User can save the processed file
  * on their directory.
  * 
@@ -157,7 +158,6 @@ public class WordProcessorGui extends JFrame implements ActionListener {
 			int i = fc.showOpenDialog(this);
 			if (i == JFileChooser.APPROVE_OPTION) {
 				processFile = fc.getSelectedFile(); // this is a File object
-				// String filepath = processFile.getPath();
 				try {
 					flags = "lsn1-";
 					processedString = "";
@@ -165,7 +165,6 @@ public class WordProcessorGui extends JFrame implements ActionListener {
 					processing();
 					previewDisplay.setText(processedString);
 					errorLogDisplay.setText(errorString);
-					// br.close();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -195,7 +194,6 @@ public class WordProcessorGui extends JFrame implements ActionListener {
 		String oneLine;
 		int lineNumber = 0;
 		boolean end = false;
-		// int index;
 
 		// flags: Justification; Spacing; Indentation; Column
 
@@ -271,12 +269,11 @@ public class WordProcessorGui extends JFrame implements ActionListener {
 						} else {
 							// case: invalid flag
 							// print an error message in the error log
-							errorString += "Error (Line number " + lineNumber + "): Invalid flag.\n";
-							// end = true;
+							errorString += "Error : Invalid flag.\n";
 						}
 
 					} else {
-						errorString += "Error (Line number " + lineNumber + "): Must include flag after -.\n";
+						errorString += "Error : Must include flag after -.\n";
 					}
 				} else {
 					end = writing(oneLine, lineNumber);
@@ -372,11 +369,11 @@ public class WordProcessorGui extends JFrame implements ActionListener {
 				}
 
 				if (flags.charAt(0) == 'r') {
-					
+
 					if (flags.charAt(2) != 'n') {
-					    errorString += "Error (Line number " + lineNumber + "): indentation only works with left justification.\n";
+						errorString += "Error : indentation only works with left justification.\n";
 					}
-					
+
 					if (flags.charAt(3) == '1') {
 						tempStr = tempStr.trim();
 						int strLength = tempStr.length();
@@ -398,26 +395,26 @@ public class WordProcessorGui extends JFrame implements ActionListener {
 
 				} else if (flags.charAt(0) == 'c') {
 					if (flags.charAt(2) != 'n') {
-					    errorString += "Error (Line number " + lineNumber + "): indentation only works with left justification.\n";
-					}else {
+						errorString += "Error : indentation only works with left justification.\n";
+					} else {
 						int spacesBetween = 0;
 						int spacesBetweenMod = 0;
 						int spacesCount;
 						int totalSpaces;
 						int totalChars = 0;
 						int chars;
-	
+
 						if (flags.charAt(3) == '1')
 							chars = 80;
 						else
 							chars = 35;
-	
+
 						String[] words = tempStr.split("\\s+");
 						if (words.length > 0) {
 							for (int i = 0; i < words.length; i++) {
 								totalChars += words[i].length();
 							}
-	
+
 							spacesCount = (chars - totalChars);
 							totalSpaces = (words.length - 1);
 							if (totalSpaces != 0) {
@@ -432,7 +429,8 @@ public class WordProcessorGui extends JFrame implements ActionListener {
 										if (flags.charAt(3) == '2')
 											wordblocks.set(counter, tempStr);
 									} else {
-										tempStr += words[i] + new String(new char[spacesBetween + 1]).replace("\0", " ");
+										tempStr += words[i]
+												+ new String(new char[spacesBetween + 1]).replace("\0", " ");
 										if (flags.charAt(3) == '2')
 											wordblocks.set(counter, tempStr);
 										spacesBetweenMod--;
